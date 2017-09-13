@@ -5,13 +5,15 @@ import { makeRemoteExecutableSchema, mergeSchemas } from 'graphql-tools';
 import { createApolloFetch } from 'apollo-fetch';
 
 async function run() {
-  const universeSchema = await makeRemoteExecutableSchema(createApolloFetch({
+  const firstSchema = makeRemoteExecutableSchema(createApolloFetch({
     uri: 'https://www.universe.com/graphql/beta',
   }));
 
-  const weatherSchema = await makeRemoteExecutableSchema(createApolloFetch({
+  const secondSchema = makeRemoteExecutableSchema(createApolloFetch({
     uri: 'https://5rrx10z19.lp.gql.zone/graphql',
   }));
+
+  const [universeSchema, weatherSchema] = await Promise.all([firstSchema, secondSchema]);
 
   const schema = mergeSchemas({
     schemas: [universeSchema, weatherSchema],
